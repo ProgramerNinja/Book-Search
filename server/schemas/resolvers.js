@@ -18,6 +18,7 @@ const resolvers = {
     },
     login: async (_, { email, password }) => {
       const user = await User.findOne({ email });
+      console.log(user);
       if (!user) {
         throw new AuthenticationError('Incorrect email or password');
       }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, Container, Modal, Tab } from 'react-bootstrap';
 import { useMutation } from '@apollo/client';
-import { LOGIN_USER, ADD_USER } from '../utils/mutations';
+import { LOGIN, ADD_USER } from '../utils/mutations';
 import Auth from '../utils/auth';
 import SignUpForm from './SignupForm';
 import LoginForm from './LoginForm';
@@ -10,16 +10,16 @@ import LoginForm from './LoginForm';
 const AppNavbar = () => {
   const [showModal, setShowModal] = useState(false);
 
-  const [loginUser] = useMutation(LOGIN_USER);
+  const [login] = useMutation(LOGIN);
   const [addUser] = useMutation(ADD_USER);
 
   const handleLogin = async (userData) => {
     try {
-      const { data } = await loginUser({
+      const { data } = await login({
         variables: { ...userData }
       });
 
-      const { token } = data.loginUser;
+      const { token } = data.login;
       Auth.login(token);
       setShowModal(false);
     } catch (err) {

@@ -3,7 +3,7 @@ const typeDefs = `
   type Book {
     _id: ID!
     username: String!
-    authors: String
+    authors: [String]
     description: String!
     bookId: String!
     image: String
