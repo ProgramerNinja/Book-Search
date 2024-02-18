@@ -1,14 +1,47 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, Container, Modal, Tab } from 'react-bootstrap';
+import { useMutation } from '@apollo/client';
+import { LOGIN_USER, ADD_USER } from '../utils/mutations';
+import Auth from '../utils/auth';
 import SignUpForm from './SignupForm';
 import LoginForm from './LoginForm';
 
-import Auth from '../utils/auth';
-
 const AppNavbar = () => {
-  // set modal display state
   const [showModal, setShowModal] = useState(false);
+
+  const [loginUser] = useMutation(LOGIN_USER);
+  const [addUser] = useMutation(ADD_USER);
+
+  const handleLogin = async (userData) => {
+    try {
+      const { data } = await loginUser({
+        variables: { ...userData }
+      });
+
+      const { token } = data.loginUser;
+      Auth.login(token);
+      setShowModal(false);
+    } catch (err) {
+      console.error(err);
+      // Handle login error
+    }
+  };
+
+  const handleSignup = async (userData) => {
+    try {
+      const { data } = await addUser({
+        variables: { ...userData }
+      });
+
+      const { token } = data.addUser;
+      Auth.login(token);
+      setShowModal(false);
+    } catch (err) {
+      console.error(err);
+      // Handle signup error
+    }
+  };
 
   return (
     <>
@@ -23,7 +56,6 @@ const AppNavbar = () => {
               <Nav.Link as={Link} to='/'>
                 Search For Books
               </Nav.Link>
-              {/* if user is logged in show saved books and logout */}
               {Auth.loggedIn() ? (
                 <>
                   <Nav.Link as={Link} to='/saved'>
@@ -38,13 +70,13 @@ const AppNavbar = () => {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      {/* set modal data up */}
+
       <Modal
         size='lg'
         show={showModal}
         onHide={() => setShowModal(false)}
-        aria-labelledby='signup-modal'>
-        {/* tab container to do either signup or login component */}
+        aria-labelledby='signup-modal'
+      >
         <Tab.Container defaultActiveKey='login'>
           <Modal.Header closeButton>
             <Modal.Title id='signup-modal'>
@@ -61,10 +93,10 @@ const AppNavbar = () => {
           <Modal.Body>
             <Tab.Content>
               <Tab.Pane eventKey='login'>
-                <LoginForm handleModalClose={() => setShowModal(false)} />
+                <LoginForm handleLogin={handleLogin} handleModalClose={() => setShowModal(false)} />
               </Tab.Pane>
               <Tab.Pane eventKey='signup'>
-                <SignUpForm handleModalClose={() => setShowModal(false)} />
+                <SignUpForm handleSignup={handleSignup} handleModalClose={() => setShowModal(false)} />
               </Tab.Pane>
             </Tab.Content>
           </Modal.Body>
