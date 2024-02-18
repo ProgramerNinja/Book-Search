@@ -29,6 +29,7 @@ const resolvers = {
       }
 
       const token = signToken(user);
+      console.log( {token}, user )
       return { token, user };
     },
     saveBook: async (_, { bookData }, context) => {
