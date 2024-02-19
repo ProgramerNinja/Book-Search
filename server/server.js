@@ -20,7 +20,7 @@ const startApolloServer = async () => {
   await server.start();
   await connectDB(); 
 
-  app.use(express.urlencoded({ extended: false }));
+  app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
 
   app.use('/graphql', expressMiddleware(server, {
